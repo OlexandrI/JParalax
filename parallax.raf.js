@@ -193,10 +193,10 @@ if (!window.cancelAnimationFrame)
 	 UpdateFX: function(){
 		 if(!JParallax.bWorking && JParallax.bNeedUpdate){
 			 JParallax.bWorking = true;
-			 //window.requestAnimationFrame(function(){
+			 window.requestAnimationFrame(function(){
 				 JParallax.Tick();
 				 JParallax.bWorking = false;
-			//	});
+				});
 			}
 		}
     });

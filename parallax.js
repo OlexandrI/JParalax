@@ -164,10 +164,8 @@
 	 UpdateFX: function(){
 		 if(!JParallax.bWorking && JParallax.bNeedUpdate){
 			 JParallax.bWorking = true;
-			 //window.requestAnimationFrame(function(){
-				 JParallax.Tick();
-				 JParallax.bWorking = false;
-			//	});
+			 JParallax.Tick();
+			 JParallax.bWorking = false;
 			}
 		}
     });
