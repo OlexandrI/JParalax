@@ -1,12 +1,12 @@
 /*!
- * parallax.js v1.0 (https://github.com/OlexandrI/JParalax)
+ * parallax.js v1.1 (https://github.com/OlexandrI/JParalax)
  * @copyright 2015 OlexandrI, SRGMarketing
  * @license MIT (https://github.com/OlexandrI/JParalax/blob/master/LICENSE)
  */
 
 ;(function($, window, document){
  var JParallax;
- 
+  
 // Polyfill for requestAnimationFrame
 // via: https://gist.github.com/paulirish/1579671
 
@@ -35,13 +35,13 @@ if (!window.cancelAnimationFrame)
   };
 }());
 
-
  // Constructor
  JParallax = function(element, options){
 	 if(typeof options == 'object')
 		 JParallax.SetUp.call(this, options);
 	
-	 if(this.disOnMobile && navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)){
+	 if((this.disOnMobile || this.hideOnMobile) && navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)){
+		 if(this.hideOnMobile) $(element).css("background", "transparent");
 		 return this;
 		}
 	
@@ -56,10 +56,13 @@ if (!window.cancelAnimationFrame)
  $.extend(JParallax.prototype, {
 	 speed:			0.5,		// Just multipler
 	 disOnMobile:	true,		// Disable on mobile
+	 hideOnMobile:	false,		// Hide this background on mobile
 	 axisX:			false,		// Allow parallax on X-axis
 	 axisY:			true,		// Allow parallax on Y-axis
 	 startPosX:		0,			// Init parallax position on X-axis (need to set manual!)
+	 rawPosX:		"",			// Raw position on X-axis 
 	 startPosY:		0,			// Init parallax position on Y-axis (need to set manual!)
+	 rawPosY:		"",			// Raw position on Y-axis 
 	 units:			"px",		// Position units
 	 debug:			false,
 	 
@@ -70,9 +73,19 @@ if (!window.cancelAnimationFrame)
 		 this.parallax[1] = this.startPosY + Y * this.speed;
 		 var res = "";
 		 if(this.axisX) res+= this.parallax[0] + this.units + " ";
-			else res+= this.startPosX + this.units + " ";
+			else{
+			 if(this.rawPosX!="")
+				 res+= this.rawPosX + " ";
+				else
+				 res+= this.startPosX + this.units + " ";
+			}
 		 if(this.axisY) res+= this.parallax[1] + this.units;
-			else res+= this.startPosY + this.units;
+			else{
+			 if(this.rawPosY!="")
+				 res+= this.rawPosY + " ";
+				else
+				 res+= this.startPosY + this.units;
+			}
 		 this.Q.css("backgroundPosition", res);
 		},
 	// Native function after change
@@ -151,9 +164,14 @@ if (!window.cancelAnimationFrame)
 						 if(isNaN(candidate)) return;
 						break;
 					// Booleans
-					 case 'disOnMobile': case 'axisX': case 'axisY': case 'debug':
+					 case 'disOnMobile': case 'hideOnMobile': case 'axisX': case 'axisY': case 'debug':
 						 if(typeof candidate=="function") candidate = candidate(el);
 						 candidate = Boolean(candidate);
+						break;
+					// User string
+					 case 'rawPosX': case 'rawPosY':
+						 if(typeof candidate=="function") candidate = candidate(el);
+						 candidate = candidate.toString();
 						break;
 					// User functions
 					 case 'Tick': case 'afterTick':
